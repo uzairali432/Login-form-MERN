@@ -1,8 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import { signupSchema, loginSchema } from '../validators/auth.js';
-import { users } from '../data/users.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
@@ -22,29 +21,25 @@ router.post('/signup', async (req, res) => {
     const { email, password, name, role } = value;
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email === email);
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
-    const newUser = {
-      id: users.length + 1,
+    // Create new user (password will be hashed by pre-save hook)
+    const newUser = new User({
       email,
-      password: hashedPassword,
+      password,
       name,
-      role: role || 'user' // Default to 'user' if not provided
-    };
+      role: role || 'user'
+    });
 
-    users.push(newUser);
+    await newUser.save();
 
     // Generate JWT token
     const token = jwt.sign(
       { 
-        id: newUser.id, 
+        id: newUser._id, 
         email: newUser.email, 
         role: newUser.role 
       },
@@ -56,7 +51,7 @@ router.post('/signup', async (req, res) => {
       message: 'User created successfully',
       token,
       user: {
-        id: newUser.id,
+        id: newUser._id,
         email: newUser.email,
         name: newUser.name,
         role: newUser.role
@@ -64,6 +59,12 @@ router.post('/signup', async (req, res) => {
     });
   } catch (error) {
     console.error('Signup error:', error);
+    
+    // Handle MongoDB duplicate key error
+    if (error.code === 11000) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -83,13 +84,13 @@ router.post('/login', async (req, res) => {
     const { email, password } = value;
 
     // Find user
-    const user = users.find(u => u.email === email);
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    // Verify password using the model method
+    const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -97,7 +98,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { 
-        id: user.id, 
+        id: user._id, 
         email: user.email, 
         role: user.role 
       },
@@ -109,7 +110,7 @@ router.post('/login', async (req, res) => {
       message: 'Login successful',
       token,
       user: {
-        id: user.id,
+        id: user._id,
         email: user.email,
         name: user.name,
         role: user.role
@@ -122,4 +123,3 @@ router.post('/login', async (req, res) => {
 });
 
 export default router;
-
