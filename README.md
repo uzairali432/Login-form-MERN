@@ -1,226 +1,170 @@
-🔐 Login / Signup Form with JWT Authentication & MongoDB
+# 🔐 Login / Signup Form with JWT Authentication & MongoDB
 
 A full-stack authentication system with JWT authorization, MongoDB database, and role-based access control (user/admin), built using React, Express, MongoDB, and Joi validation.
 
-🚀 Features
+---
 
-✅ User registration (Signup) with validation
+## 🚀 Features
 
-✅ User login with JWT token generation
+- User registration (Signup) with validation  
+- User login with JWT token generation  
+- JWT-based authentication & authorization  
+- Role-based access control (User / Admin)  
+- Protected routes & API endpoints  
+- MongoDB database integration  
+- Password hashing with bcrypt  
+- Client-side & server-side validation using Joi  
+- Clean and responsive UI  
 
-✅ JWT-based authentication & authorization
+---
 
-✅ Role-based access control (User / Admin)
+## 🛠 Tech Stack
 
-✅ Protected routes & API endpoints
+Frontend:
+- React 19
+- Vite
+- Context API
 
-✅ MongoDB database integration (persistent storage)
+Backend:
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- JSON Web Tokens (JWT)
+- bcryptjs
+- Joi
+- CORS
 
-✅ Password hashing with bcrypt
+---
 
-✅ Client-side & server-side validation using Joi
+## 📦 Setup Instructions
 
-✅ Clean, professional, responsive UI
+1) Install Dependencies  
+Run the following command in the project root:
 
-🛠 Tech Stack
-Frontend
+    npm install
 
-React 19
+2) Environment Variables  
+Create a `.env` file in the root directory and add:
 
-Vite
+    PORT=3001
+    JWT_SECRET=your-super-secret-jwt-key
+    MONGODB_URI=mongodb://127.0.0.1:27017/jwt_auth_db
 
-Context API (Authentication state)
+3) Run the Application  
 
-Fetch API
+Backend server:
 
-Backend
+    npm run server
 
-Node.js
+Frontend server:
 
-Express.js
+    npm run dev
 
-MongoDB + Mongoose
+Frontend URL: http://localhost:5173  
+Backend API URL: http://localhost:3001  
 
-JSON Web Tokens (JWT)
+---
 
-bcryptjs (password hashing)
+## 🔗 API Endpoints
 
-Joi (request validation)
+Authentication:
 
-CORS
+POST /api/auth/signup  
+Request body example:
+- name: John Doe
+- email: john@example.com
+- password: 123456
+- role: user (optional, default is user)
 
-📦 Setup Instructions
-1️⃣ Install Dependencies
-npm install
+POST /api/auth/login  
+Request body example:
+- email: john@example.com
+- password: 123456
 
-2️⃣ Environment Variables
+Protected Routes (JWT Required):
 
-Create a .env file in the root directory:
+- GET /api/protected/profile → User & Admin
+- GET /api/protected/dashboard → User & Admin
+- GET /api/protected/admin → Admin only
 
-PORT=3001
-JWT_SECRET=your-super-secret-jwt-key
-MONGODB_URI=mongodb://127.0.0.1:27017/jwt_auth_db
+---
 
+## 🧠 Authentication Flow
 
-⚠️ Important:
+1. User signs up and password is hashed before saving to MongoDB  
+2. User logs in and receives a JWT token  
+3. Token is stored on frontend using Context API  
+4. Protected routes verify JWT using middleware  
+5. Role-based middleware restricts admin-only routes  
 
-Use a strong JWT_SECRET in production
+---
 
-Replace MongoDB URI when deploying (MongoDB Atlas recommended)
+## ✅ Validation Rules (Joi)
 
-3️⃣ Run the Application
-
-You must run both frontend and backend:
-
-🖥 Terminal 1 — Backend Server
-npm run server
-
-🌐 Terminal 2 — Frontend (Vite)
-npm run dev
-
-
-📍 Frontend: http://localhost:5173
-📍 Backend API: http://localhost:3001
-
-🔗 API Endpoints
-🔑 Authentication
-POST /api/auth/signup
-
-Register a new user
-
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "123456",
-  "role": "user"
-}
-
-
-Role is optional (defaults to user)
-
-POST /api/auth/login
-
-Login user & receive JWT
-
-{
-  "email": "john@example.com",
-  "password": "123456"
-}
-
-🔒 Protected Routes (JWT Required)
-Method	Endpoint	Access
-GET	/api/protected/profile	User & Admin
-GET	/api/protected/dashboard	User & Admin
-GET	/api/protected/admin	Admin only
-🧠 Authentication Flow
-
-User signs up → password is hashed & saved in MongoDB
-
-User logs in → JWT token is generated
-
-Token is stored on frontend (Context API)
-
-Protected routes verify JWT via middleware
-
-Role-based middleware restricts admin access
-
-✅ Validation Rules (Joi)
-Signup Validation
-
-Name: Required, 2–50 characters
-
-Email: Required, valid email
-
-Password: Required, minimum 6 characters
-
-Role: Optional (user or admin)
-
-Login Validation
-
-Email: Required, valid email
-
-Password: Required
-
-📁 Project Structure
-├── server/
-│   ├── index.js               # Express server entry
-│   ├── config/
-│   │   └── db.js              # MongoDB connection
-│   ├── models/
-│   │   └── User.js            # Mongoose user schema
-│   ├── routes/
-│   │   ├── auth.js            # Auth routes
-│   │   └── protected.js       # Protected routes
-│   ├── middleware/
-│   │   └── auth.js            # JWT & role middleware
-│   ├── validators/
-│   │   └── auth.js            # Joi schemas
-│   └── controllers/
-│       └── authController.js  # Auth logic
-│
-├── src/
-│   ├── components/
-│   │   ├── LoginForm.jsx
-│   │   ├── SignupForm.jsx
-│   │   ├── Dashboard.jsx
-│   │   ├── AuthForm.css
-│   │   └── Dashboard.css
-│   ├── context/
-│   │   └── AuthContext.jsx
-│   ├── services/
-│   │   └── api.js
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── .env
-├── package.json
-└── README.md
-
-🔐 Security Notes
-
-Passwords are hashed using bcryptjs
-
-JWT tokens expire after 24 hours
-
-MongoDB stores users securely using Mongoose schemas
-
-Admin routes are protected via role middleware
-
-CORS enabled for development
-
-Environment variables used for secrets
-
-🌍 Production Deployment Checklist
-
-Before deploying:
-
-✅ Use MongoDB Atlas
-
-✅ Set a strong JWT_SECRET
-
-✅ Enable HTTPS
-
-✅ Configure CORS for your domain
-
-✅ Add rate limiting
-
-✅ Add logging & error handling
-
-✅ Store JWT securely (HttpOnly cookies recommended)
-
-📌 Future Improvements
-
-Refresh tokens
-
-Email verification
-
-Password reset
-
-OAuth (Google / GitHub)
-
-Admin user management panel
-
-🧑‍💻 Author
-
-Uzair Ali
-Frontend / MERN Stack Developer
+Signup:
+- Name: Required, 2–50 characters  
+- Email: Required, valid email  
+- Password: Required, minimum 6 characters  
+- Role: Optional (user or admin)
+
+Login:
+- Email: Required  
+- Password: Required  
+
+---
+
+## 📁 Project Structure
+
+server/
+- index.js (Express server entry)
+- config/db.js (MongoDB connection)
+- models/User.js (User schema)
+- routes/auth.js (Auth routes)
+- routes/protected.js (Protected routes)
+- middleware/auth.js (JWT & role middleware)
+- validators/auth.js (Joi schemas)
+- controllers/authController.js (Auth logic)
+
+src/
+- components/LoginForm.jsx
+- components/SignupForm.jsx
+- components/Dashboard.jsx
+- components/AuthForm.css
+- components/Dashboard.css
+- context/AuthContext.jsx
+- services/api.js
+- App.jsx
+- main.jsx
+
+Other files:
+- .env
+- package.json
+- README.md
+
+---
+
+## 🔐 Security Notes
+
+- Passwords are hashed using bcryptjs  
+- JWT tokens expire after 24 hours  
+- MongoDB is used for persistent storage  
+- Admin routes are protected via role-based authorization  
+- CORS enabled for development  
+
+---
+
+## 🌍 Production Checklist
+
+- Use MongoDB Atlas  
+- Store secrets securely  
+- Enable HTTPS  
+- Configure CORS properly  
+- Add rate limiting  
+- Improve error handling and logging  
+
+---
+
+## 🧑‍💻 Author
+
+Uzair Ali  
+MERN Stack Developer
