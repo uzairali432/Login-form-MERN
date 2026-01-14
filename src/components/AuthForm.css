@@ -98,7 +98,6 @@
   color: #374151;
 }
 
-/* Primary Button */
 
 .submit-button {
   margin-top: 12px;
@@ -122,7 +121,6 @@
   cursor: not-allowed;
 }
 
-/* Footer */
 
 .switch-form {
   margin-top: 18px;
@@ -144,7 +142,6 @@
   text-decoration: underline;
 }
 
-/* Hide fancy image section */
 .auth-image {
   display: none;
 }

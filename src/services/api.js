@@ -1,11 +1,9 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
-// Helper function to get auth token from localStorage
 const getToken = () => {
   return localStorage.getItem('token');
 };
 
-// Helper function to make authenticated requests
 const authFetch = async (url, options = {}) => {
   const token = getToken();
   const headers = {

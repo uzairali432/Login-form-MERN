@@ -31,7 +31,6 @@ const Dashboard = () => {
           const admin = await protectedAPI.getAdminData();
           setAdminData(admin);
         } catch (err) {
-          // Admin endpoint might fail if not admin, that's okay
         }
       }
     } catch (err) {

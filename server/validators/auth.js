@@ -1,6 +1,5 @@
 import Joi from 'joi';
 
-// Signup validation schema
 export const signupSchema = Joi.object({
   name: Joi.string()
     .min(2)
@@ -34,7 +33,6 @@ export const signupSchema = Joi.object({
     })
 });
 
-// Login validation schema
 export const loginSchema = Joi.object({
   email: Joi.string()
     .email()
