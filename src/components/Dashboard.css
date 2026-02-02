@@ -7,6 +7,27 @@
   background: #f8f9fa;
 }
 
+.loading,
+.error-banner {
+  padding: 40px;
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 40px;
+}
+
+.loading {
+  color: #667eea;
+}
+
+.error-banner {
+  background-color: #fee;
+  color: #c00;
+  border: 1px solid #f88;
+  border-radius: 4px;
+  max-width: 600px;
+  margin: 40px auto;
+}
+
 .products-header {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;

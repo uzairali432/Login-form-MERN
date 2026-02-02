@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.js';
 import protectedRoutes from './routes/protected.js';
+import productRoutes from './routes/products.js';
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/protected', protectedRoutes);
+app.use('/api/products', productRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ 

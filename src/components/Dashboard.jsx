@@ -1,34 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { productsAPI } from '../services/api';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [cart, setCart] = useState([]);
   const [sortBy, setSortBy] = useState('popular');
 
-  // Mock product data
-  const products = [
-    { id: 1, name: 'Wireless Headphones', price: 79.99, category: 'electronics', rating: 4.5, reviews: 128, image: '🎧' },
-    { id: 2, name: 'USB-C Cable', price: 12.99, category: 'electronics', rating: 4.8, reviews: 456, image: '🔌' },
-    { id: 3, name: 'Phone Case', price: 19.99, category: 'accessories', rating: 4.3, reviews: 89, image: '📱' },
-    { id: 4, name: 'Screen Protector', price: 9.99, category: 'accessories', rating: 4.7, reviews: 234, image: '📺' },
-    { id: 5, name: 'Laptop Stand', price: 34.99, category: 'office', rating: 4.6, reviews: 167, image: '💻' },
-    { id: 6, name: 'Desk Lamp', price: 29.99, category: 'office', rating: 4.4, reviews: 95, image: '💡' },
-    { id: 7, name: 'Portable Speaker', price: 49.99, category: 'electronics', rating: 4.7, reviews: 312, image: '🔊' },
-    { id: 8, name: 'Phone Mount', price: 14.99, category: 'accessories', rating: 4.5, reviews: 178, image: '🎯' },
-    { id: 9, name: 'Keyboard', price: 59.99, category: 'office', rating: 4.6, reviews: 203, image: '⌨️' },
-    { id: 10, name: 'Mouse Pad', price: 16.99, category: 'office', rating: 4.4, reviews: 112, image: '🖱️' },
-    { id: 11, name: 'Screen Cleaner Kit', price: 11.99, category: 'accessories', rating: 4.3, reviews: 67, image: '🧹' },
-    { id: 12, name: 'Cable Organizer', price: 13.99, category: 'accessories', rating: 4.6, reviews: 145, image: '🔗' },
-  ];
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const data = await productsAPI.getAll();
+      setProducts(data.products);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch products');
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const categories = [
     { id: 'all', label: 'All Products' },
-    { id: 'electronics', label: 'Electronics' },
-    { id: 'accessories', label: 'Accessories' },
-    { id: 'office', label: 'Office' },
   ];
 
   // Filter products
@@ -40,7 +43,6 @@ const Dashboard = () => {
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortBy === 'price-low') return a.price - b.price;
     if (sortBy === 'price-high') return b.price - a.price;
-    if (sortBy === 'rating') return b.rating - a.rating;
     return 0; // popular (original order)
   });
 
@@ -62,6 +64,40 @@ const Dashboard = () => {
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  if (loading) {
+    return (
+      <div className="products-container">
+        <div className="products-header">
+          <div className="header-content">
+            <h1>Shop</h1>
+            <div className="header-actions">
+              <span className="user-greeting">Welcome, {user?.name}</span>
+              <button onClick={logout} className="logout-button">Logout</button>
+            </div>
+          </div>
+        </div>
+        <div className="loading">Loading products...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="products-container">
+        <div className="products-header">
+          <div className="header-content">
+            <h1>Shop</h1>
+            <div className="header-actions">
+              <span className="user-greeting">Welcome, {user?.name}</span>
+              <button onClick={logout} className="logout-button">Logout</button>
+            </div>
+          </div>
+        </div>
+        <div className="error-banner">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="products-container">
@@ -148,13 +184,10 @@ const Dashboard = () => {
           <div className="products-grid">
             {sortedProducts.map(product => (
               <div key={product.id} className="product-card">
-                <div className="product-image">{product.image}</div>
+                <div className="product-image">📦</div>
                 <div className="product-info">
                   <h3 className="product-name">{product.name}</h3>
-                  <div className="product-rating">
-                    <span className="stars">★ {product.rating}</span>
-                    <span className="review-count">({product.reviews})</span>
-                  </div>
+                  <p className="product-description">{product.description}</p>
                   <div className="product-footer">
                     <span className="product-price">${product.price.toFixed(2)}</span>
                     <button

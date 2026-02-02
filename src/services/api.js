@@ -63,3 +63,21 @@ export const protectedAPI = {
   },
 };
 
+// Products API - requires authentication
+export const productsAPI = {
+  getAll: async () => {
+    return authFetch('/products');
+  },
+
+  getById: async (id) => {
+    return authFetch(`/products/${id}`);
+  },
+
+  addToCart: async (productId, quantity) => {
+    return authFetch('/products/cart/add', {
+      method: 'POST',
+      body: JSON.stringify({ productId, quantity }),
+    });
+  },
+};
+
