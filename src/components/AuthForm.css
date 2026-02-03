@@ -61,13 +61,28 @@
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  border-color: #dc2626;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
 }
 
 .form-group input.error {
   border-color: #dc2626;
   background: #fef2f2;
+}
+
+.form-group input.success {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.form-group select.error {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.form-group select.success {
+  border-color: #16a34a;
+  background: #f0fdf4;
 }
 
 .field-error {
@@ -106,14 +121,14 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #ffffff;
-  background-color: #2563eb;
+  background-color: #dc2626;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: #1d4ed8;
+  background-color: #b91c1c;
 }
 
 .submit-button:disabled {
@@ -132,7 +147,7 @@
 .link-button {
   background: none;
   border: none;
-  color: #2563eb;
+  color: #dc2626;
   font-weight: 500;
   cursor: pointer;
   padding: 0;

@@ -52,18 +52,69 @@ const SignupForm = ({ onSwitchToLogin }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
+
+    if (name === 'name') {
+      if (!value) {
+        newErrors.name = 'Name is required';
+      } else if (value.length < 2) {
+        newErrors.name = 'Name must be at least 2 characters long';
+      } else if (value.length > 50) {
+        newErrors.name = 'Name must not exceed 50 characters';
+      } else {
+        delete newErrors.name;
+      }
+    } else if (name === 'email') {
+      if (!value) {
+        newErrors.email = 'Email is required';
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        newErrors.email = 'Email is invalid';
+      } else {
+        delete newErrors.email;
+      }
+    } else if (name === 'password') {
+      if (!value) {
+        newErrors.password = 'Password is required';
+      } else if (value.length < 6) {
+        newErrors.password = 'Password must be at least 6 characters long';
+      } else {
+        delete newErrors.password;
+      }
+      // Also validate confirmPassword if it exists
+      if (formData.confirmPassword) {
+        if (value !== formData.confirmPassword) {
+          newErrors.confirmPassword = 'Passwords do not match';
+        } else {
+          delete newErrors.confirmPassword;
+        }
+      }
+    } else if (name === 'confirmPassword') {
+      if (!value) {
+        newErrors.confirmPassword = 'Please confirm your password';
+      } else if (value !== formData.password) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      } else {
+        delete newErrors.confirmPassword;
+      }
+    } else if (name === 'role') {
+      if (value && !['user', 'admin'].includes(value)) {
+        newErrors.role = 'Role must be either "user" or "admin"';
+      } else {
+        delete newErrors.role;
+      }
+    }
+
+    setErrors(newErrors);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
+    validateField(name, value);
     setSubmitError('');
   };
 
@@ -103,7 +154,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={errors.name ? 'error' : ''}
+            className={errors.name ? 'error' : formData.name && !errors.name ? 'success' : ''}
             placeholder="Enter your name"
           />
           {errors.name && <span className="field-error">{errors.name}</span>}
@@ -117,7 +168,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={errors.email ? 'error' : ''}
+            className={errors.email ? 'error' : formData.email && !errors.email ? 'success' : ''}
             placeholder="Enter your email"
           />
           {errors.email && <span className="field-error">{errors.email}</span>}
@@ -131,7 +182,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className={errors.password ? 'error' : ''}
+            className={errors.password ? 'error' : formData.password && !errors.password ? 'success' : ''}
             placeholder="Enter your password (min 6 characters)"
           />
           {errors.password && <span className="field-error">{errors.password}</span>}
@@ -145,7 +196,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className={errors.confirmPassword ? 'error' : ''}
+            className={errors.confirmPassword ? 'error' : formData.confirmPassword && !errors.confirmPassword ? 'success' : ''}
             placeholder="Confirm your password"
           />
           {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
@@ -158,7 +209,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            className={errors.role ? 'error' : ''}
+            className={errors.role ? 'error' : formData.role && !errors.role ? 'success' : ''}
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>

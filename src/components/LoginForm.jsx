@@ -29,18 +29,35 @@ const LoginForm = ({ onSwitchToSignup }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
+
+    if (name === 'email') {
+      if (!value) {
+        newErrors.email = 'Email is required';
+      } else if (!/\S+@\S+\.\S+/.test(value)) {
+        newErrors.email = 'Email is invalid';
+      } else {
+        delete newErrors.email;
+      }
+    } else if (name === 'password') {
+      if (!value) {
+        newErrors.password = 'Password is required';
+      } else {
+        delete newErrors.password;
+      }
+    }
+
+    setErrors(newErrors);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
-    }
+    validateField(name, value);
     setSubmitError('');
   };
 
@@ -75,7 +92,7 @@ const LoginForm = ({ onSwitchToSignup }) => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={errors.email ? 'error' : ''}
+            className={errors.email ? 'error' : formData.email && !errors.email ? 'success' : ''}
             placeholder="Enter your email"
           />
           {errors.email && <span className="field-error">{errors.email}</span>}
@@ -89,7 +106,7 @@ const LoginForm = ({ onSwitchToSignup }) => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className={errors.password ? 'error' : ''}
+            className={errors.password ? 'error' : formData.password && !errors.password ? 'success' : ''}
             placeholder="Enter your password"
           />
           {errors.password && <span className="field-error">{errors.password}</span>}
