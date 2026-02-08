@@ -115,6 +115,33 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* User Details Section */}
+      <div className="user-details-section">
+        <div className="user-details-card">
+          <h2>User Profile</h2>
+          <div className="user-details-content">
+            <div className="detail-item">
+              <span className="detail-label">Name:</span>
+              <span className="detail-value">{user?.name}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Email:</span>
+              <span className="detail-value">{user?.email}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-label">Role:</span>
+              <span className="detail-value">{user?.role || 'User'}</span>
+            </div>
+            {user?.id && (
+              <div className="detail-item">
+                <span className="detail-label">User ID:</span>
+                <span className="detail-value">{user?.id}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="products-main">
         {/* Sidebar */}
         <aside className="products-sidebar">
