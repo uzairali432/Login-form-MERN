@@ -61,6 +61,13 @@ export const protectedAPI = {
   getDashboard: async () => {
     return authFetch('/protected/dashboard');
   },
+
+  updateName: async (newName) => {
+    return authFetch('/protected/profile/name', {
+      method: 'PUT',
+      body: JSON.stringify({ name: newName }),
+    });
+  },
 };
 
 // Products API - requires authentication

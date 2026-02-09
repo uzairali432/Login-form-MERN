@@ -4,13 +4,17 @@ import { productsAPI } from '../services/api';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateName } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [cart, setCart] = useState([]);
   const [sortBy, setSortBy] = useState('popular');
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newName, setNewName] = useState(user?.name || '');
+  const [updateError, setUpdateError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -28,6 +32,36 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditName = () => {
+    setIsEditingName(true);
+    setNewName(user?.name || '');
+    setUpdateError('');
+  };
+
+  const handleSaveName = async () => {
+    try {
+      setIsSaving(true);
+      setUpdateError('');
+      const result = await updateName(newName);
+      
+      if (result.success) {
+        setIsEditingName(false);
+      } else {
+        setUpdateError(result.error || 'Failed to update name');
+      }
+    } catch (err) {
+      setUpdateError(err.message || 'Failed to update name');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingName(false);
+    setNewName(user?.name || '');
+    setUpdateError('');
   };
 
   const categories = [
@@ -122,7 +156,45 @@ const Dashboard = () => {
           <div className="user-details-content">
             <div className="detail-item">
               <span className="detail-label">Name:</span>
-              <span className="detail-value">{user?.name}</span>
+              {isEditingName ? (
+                <div className="detail-edit">
+                  <input
+                    type="text"
+                    className="name-input"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="Enter your name"
+                  />
+                  <div className="edit-buttons">
+                    <button
+                      className="save-btn"
+                      onClick={handleSaveName}
+                      disabled={isSaving || !newName.trim()}
+                    >
+                      {isSaving ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                      className="cancel-btn"
+                      onClick={handleCancelEdit}
+                      disabled={isSaving}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {updateError && <span className="error-message">{updateError}</span>}
+                </div>
+              ) : (
+                <div className="detail-value-with-edit">
+                  <span className="detail-value">{user?.name}</span>
+                  <button
+                    className="edit-btn"
+                    onClick={handleEditName}
+                    title="Edit name"
+                  >
+                    ✏️
+                  </button>
+                </div>
+              )}
             </div>
             <div className="detail-item">
               <span className="detail-label">Email:</span>

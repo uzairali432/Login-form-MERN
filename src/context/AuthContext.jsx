@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../services/api';
+import { authAPI, protectedAPI } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -68,6 +68,20 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateName = async (newName) => {
+    try {
+      const response = await protectedAPI.updateName(newName);
+      const updatedUser = response.user;
+      
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  };
+
   const isAdmin = () => {
     return user?.role === 'admin';
   };
@@ -79,6 +93,7 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
+    updateName,
     isAdmin,
     isAuthenticated: !!user,
   };
