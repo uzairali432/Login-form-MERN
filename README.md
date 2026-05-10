@@ -37,3 +37,4 @@ A full-stack MERN authentication system with JWT authorization, MongoDB integrat
 ```bash
 git clone https://github.com/uzairali432/E-commerce-Mern.git
 cd E-commerce-Mern
+Made by Uzair Ali 
